@@ -1,9 +1,10 @@
-﻿using System;
+﻿using AOCLib;
+using AOCLib.Parsing;
+using System;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Numerics;
-using AOCLib;
-using AOCLib.Parsing;
 
 namespace Solutions
 {
@@ -70,27 +71,24 @@ namespace Solutions
             long result = 0;
             int[,] map = new int[lines.Length, lines[0].Length];
             (int x, int y) start = (0, 0);
-            for (int y = 0; y < lines.Length; y++)
-            {
-                for (int x = 0; x < lines[0].Length; x++)
+            foreach(var coor in map.GetAllCoords())
+            { 
+                if (lines[coor.y][coor.x] == 'S')
                 {
-                    if (lines[y][x] == 'S')
-                    {
-                        map[y, x] = 2;
-                        start = (x, y);
-                    }
-                    else if (lines[y][x] == '^')
-                    {
-                        map[y, x] = 1;
-                    }
-                    else
-                        map[y, x] = 0;
+                    map[coor.y, coor.x] = 2;
+                    start = coor;
                 }
+                else if (lines[coor.y][coor.x] == '^')
+                {
+                    map[coor.y, coor.x] = 1;
+                }
+                else
+                    map[coor.y, coor.x] = 0;
             }
 
             Dictionary<int, long> activeBeams = new();
             activeBeams.Add(start.x, 1);
-            int height = 1;
+            int height = 0;
             while (height + 1 < lines.Length)
             {
                 Dictionary<int, long> newBeams = new Dictionary<int, long>();
