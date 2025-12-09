@@ -25,8 +25,6 @@ namespace Solutions
             {
                 for (int j = i + 1; j < numbers.Count; j++)
                 {
-                    if (i == j)
-                        continue;
                     distances.Add((i, j, EuclidianDistance(numbers[i], numbers[j])));
                 }
             }
