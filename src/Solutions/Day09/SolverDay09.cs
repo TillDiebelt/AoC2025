@@ -53,6 +53,18 @@ namespace Solutions
 
             long area = 0;
 
+
+
+            List<((long x, long y), (long x, long y))> vectors = new();
+            for (int i = 0; i < tups.Count - 1; i++)
+            {
+                int j = (i + 1) ;
+                var p1 = tups[i];
+                var p2 = tups[j];
+
+                vectors.Add((p1, p2));
+            }
+
             for (int i = 0; i < tups.Count; i++)
             {
                 for (int j = i + 1; j < tups.Count; j++)
@@ -60,11 +72,11 @@ namespace Solutions
                     var p1 = tups[i];
                     var p2 = tups[j];
 
-                    long newArea = GetArea(ref tups, i, j);
+                    long newArea = GetArea(ref tups, ref vectors, i, j);
                     if (newArea > area)
                     {
                         area = newArea;
-                        Console.WriteLine($"[{p1.x}][{p1.y}] - [{p2.x}][{p2.y}]");
+                        Console.WriteLine($"[{p1.x}][{p1.y}] - [{p2.x}][{p2.y}] : {area}");
                     }
                 }
             }
@@ -74,7 +86,7 @@ namespace Solutions
             return result;
         }
 
-        public static long GetArea(ref List<(long x, long y)> tups, int start, int end)
+        public static long GetArea(ref List<(long x, long y)> tups, ref List<((long x, long y), (long x, long y))> vecs, int start, int end)
         {
             long area = 0;
 
@@ -89,18 +101,18 @@ namespace Solutions
             (long x, long y) diff = ((p2.x - p1.x), (p2.y - p1.y));
 
             ((long x, long y) a, (long x, long y) b, (long x, long y) c) test1 = (
-                (p1.x + Math.Sign(diff.x), p1.y + Math.Sign(diff.y)),
-                (p2.x + Math.Sign(diff.x), p1.y + Math.Sign(diff.y)),
-                (p2.x + Math.Sign(diff.x), p2.y + Math.Sign(diff.y))
+                (p1.x, p1.y),
+                (p2.x, p1.y),
+                (p2.x, p2.y)
             );
             ((long x, long y) a, (long x, long y) b, (long x, long y) c) test2 = (
-                (p1.x + Math.Sign(diff.x), p1.y + Math.Sign(diff.y)),
-                (p1.x + Math.Sign(diff.x), p2.y + Math.Sign(diff.y)),
-                (p2.x + Math.Sign(diff.x), p2.y + Math.Sign(diff.y))
+                (p1.x, p1.y),
+                (p1.x, p2.y),
+                (p2.x, p2.y)
             );
 
-            valid &= !IsPathCrossing(ref tups, test1);
-            valid &= !IsPathCrossing(ref tups, test2);
+            valid &= !IsPathCrossing(ref vecs, test1);
+            valid &= !IsPathCrossing(ref vecs, test2);
 
             if (valid)
             {
@@ -109,26 +121,15 @@ namespace Solutions
             return area;
         }
 
-        public static bool IsPathCrossing(ref List<(long x, long y)> tups, ((long x, long y) a, (long x, long y) b, (long x, long y) c) test)
+        public static bool IsPathCrossing(ref List<((long x, long y), (long x, long y))> vecs, ((long x, long y) a, (long x, long y) b, (long x, long y) c) test)
         {
 
             bool crossing = false;
 
-            List<((long x, long y), (long x, long y))> vectors = new();
-
-            for (int i = 0; i < tups.Count - 1; i++)
-            {
-                int j = i + 1;
-                var p1 = tups[i];
-                var p2 = tups[j];
-
-                vectors.Add((p1, p2));
-            }
-
             var testVec1 = (test.a, test.b);
             var testVec2 = (test.b, test.c);
 
-            foreach (var v in vectors)
+            foreach (var v in vecs)
             {
                 if(IsVectorsCrossing(testVec1, v) || IsVectorsCrossing(testVec2, v))
                 {
