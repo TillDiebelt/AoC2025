@@ -19,6 +19,7 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
     <PackageReference Include="BenchmarkDotNet.Annotations" Version="0.13.2" />
+    <PackageReference Include="Google.OrTools" Version="9.14.6206" />
   </ItemGroup>
 
   <ItemGroup>
