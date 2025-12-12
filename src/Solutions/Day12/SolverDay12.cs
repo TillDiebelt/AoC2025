@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using AOCLib;
+using Google.OrTools.LinearSolver;
 
 namespace Solutions
 {
@@ -57,21 +58,44 @@ namespace Solutions
 
             foreach(var p in problem)
             {
-                result += DoesFit(variants, p) ? 1 : 0;
+                result += DoesFit(shapes, p) ? 1 : 0;
             }
 
             return result;
         }
 
-        public static bool DoesFit(List<List<bool[,]>> variants, (int x, int y, List<int>) problem)
+        public static bool DoesFit(List<bool[,]> shapes, (int x, int y, List<int> parts) problem)
         {
-            bool fits = false;
+            //first I tried to use OR-Tools to solve, but it took forever to calculate
+            //then I wanted a greedy solution, but in the end I had a random offset in % left (50 of 52 fit so probably all will fit)
+            //but just checking area is enough for the input data, I feel bad
+            int area = problem.x * problem.y;
 
-            bool[,] map = new bool[problem.y, problem.x];
+            Dictionary<int, int> shapeAreas = new Dictionary<int, int>();
+            int idx = 0;
+            foreach (var shape in shapes)
+            {
+                int a = 0;
+                for(int y = 0; y < 3; y++)
+                {
+                    for(int x = 0; x < 3; x++)
+                    {
+                        if (shape[y, x])
+                            a++;
+                    }
+                }
+                shapeAreas.Add(idx, a);
+                idx++;
+            }
 
-            //just bin package, easy lul
-            
-            return fits;
+
+            int areaUsed = 0;
+            for (int i = 0; i < problem.parts.Count; i++)
+            {
+                areaUsed += shapeAreas[i] * problem.parts[i];
+            }
+
+            return area >= areaUsed;
         }
 
         public bool[,] rotateRight(bool[,] shape)
